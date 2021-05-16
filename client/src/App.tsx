@@ -1,37 +1,33 @@
 import React, { useState } from "react";
 import TodoCard from "./components/TodoCard";
 import { Todo, TodoItem } from "./helpers/interfaces";
+import Button from "@material-ui/core/Button";
 
 const App: React.FC = () => {
-    const [state, setState] = useState<string>("");
+    const [textValue, setTextValue] = useState<string>("");
     const [todos, setTodos] = useState<Todo[]>([]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        setState(value);
-    };
-    const handleSubmit = () => {
-        const newTodo = new TodoItem(state);
-        setState("");
+    const handleSubmit = (): void => {
+        if (textValue === "") return;
+        const newTodo = new TodoItem(textValue);
+        setTextValue("");
         setTodos([...todos, newTodo]);
     };
 
     const deleteTodo = (id: string): void => {
-        setTodos(
-            // eslint-disable-next-line
-            todos.filter((todo: Todo) => {
-                if (todo.id !== id) return todo;
-            })
-        );
+        setTodos(todos.filter((x: Todo) => x.id !== id));
     };
 
     return (
         <div>
-            <h1>Todo</h1>
-            <input type="text" value={state} onChange={e => handleChange(e)} />
-            <button onClick={handleSubmit}>Add</button>
+            <div style={{ margin: "20% 0 20px" }}>
+                <input type="text" value={textValue} onChange={e => setTextValue(e.target.value)} />
+                <Button variant="contained" color="primary" onClick={handleSubmit}>
+                    +
+                </Button>
+            </div>
             {todos.map(todo => {
-                return <TodoCard deleteTodo={deleteTodo} todo={todo} />;
+                return <TodoCard key={todo.id} deleteTodo={deleteTodo} todo={todo} />;
             })}
         </div>
     );
